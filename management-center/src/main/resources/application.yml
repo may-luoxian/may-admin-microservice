@@ -1,0 +1,40 @@
+server:
+  port: 8081
+
+#nacos配置
+#spring:
+#  datasource:
+#    type: com.zaxxer.hikari.HikariDataSource
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#    #    url: jdbc:mysql://localhost:3306/may_blog?serverTimezone=Asia/Shanghai&allowMultiQueries=true
+#    url: jdbc:mysql://49.232.158.14:3306/may_blog?serverTimezone=Asia/Shanghai&allowMultiQueries=true
+#    username: root
+#    password: syk20010416
+#    hikari:
+#      minimum-idle: 10
+#      idle-timeout: 180000
+#      maximum-pool-size: 100
+#      auto-commit: true
+#      pool-name: MyHikariCP
+#      max-lifetime: 60000
+#      connection-timeout: 30000
+#      connection-test-query: SELECT 1
+#
+#  redis:
+#    #    host: localhost
+#    host: 49.232.158.14
+#    port: 6379
+#    password: syk20010416
+#    database: 0
+#    lettuce:
+#      pool:
+#        min-idle: 10
+#        max-idle: 100
+#        max-active: 100
+#        max-wait: 10000
+#
+#mybatis-plus:
+#  mapper-locations: classpath:mapper/*.xml
+#  configuration:
+#    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+#    map-underscore-to-camel-case: true
