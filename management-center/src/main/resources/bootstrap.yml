@@ -11,6 +11,8 @@ spring:
       config:
         server-addr: 192.168.101.26:8848 # 注册中心地址
         namespace: 94995f07-6828-445b-9b04-657ffc406c2a # 服务拉取配置的命名空间
+        prefix: management-center
         file-extension: yaml # 配置文件格式
         shared-configs: # 共享配置
+
 
