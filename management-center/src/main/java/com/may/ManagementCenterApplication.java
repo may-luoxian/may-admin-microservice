@@ -1,4 +1,4 @@
-package com.may.managementcenter;
+package com.may;
 
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
