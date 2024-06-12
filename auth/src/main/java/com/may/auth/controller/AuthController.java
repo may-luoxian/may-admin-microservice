@@ -1,0 +1,12 @@
+package com.may.auth.controller;
+
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+@RestController
+public class AuthController {
+    @PostMapping("/validateResource")
+    public String validateResources() {
+        return "调用成功";
+    }
+}

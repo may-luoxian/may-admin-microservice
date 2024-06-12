@@ -1,7 +1,7 @@
 package com.may.filter;
 
-import com.may.client.SysLogClient;
-import com.may.utils.AutowiredBean;
+import com.may.client.AuthClient;
+import com.may.utils.AutowiredBeanUtil;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
@@ -22,9 +22,9 @@ public class AuthorizeFilter implements GlobalFilter, Ordered {
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
 
         //获取的关键看这里，在用的时候在获取bean
-        SysLogClient sysLogClient = AutowiredBean.getBean(SysLogClient.class);
-        //异步调用feign服务接口 　　
-        Mono<String> sysLogListWithPage = sysLogClient.getSysLogListWithPage();
+        AuthClient authClient = AutowiredBeanUtil.getBean(AuthClient.class);
+        //异步调用feign服务接口
+        Mono<String> sysLogListWithPage = authClient.validateResources();
         return sysLogListWithPage.doOnNext(e -> {
             System.out.println("feignClient请求结果是:" + e);
         }).then(chain.filter(exchange));
