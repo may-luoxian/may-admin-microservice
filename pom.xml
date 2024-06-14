@@ -20,6 +20,7 @@
         <nacos.version>2.2.5.RELEASE</nacos.version>
         <reactor.feign.version>3.2.6</reactor.feign.version>
         <fastjson.version>1.2.76</fastjson.version>
+        <jjwt.version>0.9.0</jjwt.version>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -104,6 +105,12 @@
                 <groupId>com.alibaba</groupId>
                 <artifactId>fastjson</artifactId>
                 <version>${fastjson.version}</version>
+            </dependency>
+            <!--jjwt-->
+            <dependency>
+                <groupId>io.jsonwebtoken</groupId>
+                <artifactId>jjwt</artifactId>
+                <version>${jjwt.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
