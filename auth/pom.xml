@@ -41,6 +41,11 @@
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-bootstrap</artifactId>
         </dependency>
+        <!--负载均衡-->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-starter-loadbalancer</artifactId>
+        </dependency>
         <!--资源权限控制-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -64,15 +69,9 @@
         </dependency>
         <!--utils-->
         <dependency>
-            <groupId>com.may</groupId>
+            <groupId>com.may.utils</groupId>
             <artifactId>utils</artifactId>
             <version>0.0.1-SNAPSHOT</version>
-        </dependency>
-        <dependency>
-            <groupId>com.may</groupId>
-            <artifactId>utils</artifactId>
-            <version>0.0.1-SNAPSHOT</version>
-            <scope>compile</scope>
         </dependency>
     </dependencies>
 </project>

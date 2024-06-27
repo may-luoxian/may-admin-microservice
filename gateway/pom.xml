@@ -49,6 +49,13 @@
             <groupId>com.playtika.reactivefeign</groupId>
             <artifactId>feign-reactor-cloud</artifactId>
         </dependency>
+
+        <!--utils-->
+        <dependency>
+            <groupId>com.may.utils</groupId>
+            <artifactId>utils</artifactId>
+            <version>0.0.1-SNAPSHOT</version>
+        </dependency>
     </dependencies>
 
 </project>

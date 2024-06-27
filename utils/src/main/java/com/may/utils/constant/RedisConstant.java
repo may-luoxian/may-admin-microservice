@@ -1,4 +1,4 @@
-package com.may.redisservice.constant;
+package com.may.utils.constant;
 
 public interface RedisConstant {
     long CODE_EXPIRE_TIME = 15 * 60;
