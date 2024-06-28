@@ -1,5 +1,7 @@
 package com.may.auth.controller;
 
+import com.alibaba.fastjson.JSON;
+import com.may.utils.model.vo.ResultVO;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -10,6 +12,6 @@ import java.io.IOException;
 public class AuthController {
     @PostMapping("/validateResource")
     public void validateResources(HttpServletResponse response) throws IOException {
-        response.getWriter().write("继续转发");
+        response.getWriter().write(JSON.toJSONString(ResultVO.ok()));
     }
 }
