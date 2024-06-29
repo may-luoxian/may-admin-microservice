@@ -50,6 +50,17 @@
             <artifactId>feign-reactor-cloud</artifactId>
         </dependency>
 
+        <!--fastjson-->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>cn.hutool</groupId>
+            <artifactId>hutool-all</artifactId>
+        </dependency>
+
         <!--utils-->
         <dependency>
             <groupId>com.may.utils</groupId>

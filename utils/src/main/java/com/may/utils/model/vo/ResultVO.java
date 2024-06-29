@@ -2,10 +2,12 @@ package com.may.utils.model.vo;
 
 import com.may.utils.enums.StatusCodeEnum;
 
+import java.io.Serializable;
+
 import static com.may.utils.enums.StatusCodeEnum.FAIL;
 import static com.may.utils.enums.StatusCodeEnum.SUCCESS;
 
-public class ResultVO<T> {
+public class ResultVO<T> implements Serializable {
     private Boolean flag;
     private Integer code;
     private String message;
@@ -82,5 +84,15 @@ public class ResultVO<T> {
 
     public void setData(T data) {
         this.data = data;
+    }
+
+    @Override
+    public String toString() {
+        return "ResultVO{" +
+                "flag=" + flag +
+                ", code=" + code +
+                ", message='" + message + '\'' +
+                ", data=" + data +
+                '}';
     }
 }

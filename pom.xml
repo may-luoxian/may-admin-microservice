@@ -21,6 +21,7 @@
         <reactor.feign.version>3.2.6</reactor.feign.version>
         <fastjson.version>1.2.76</fastjson.version>
         <jjwt.version>0.9.0</jjwt.version>
+        <hutool.version>5.8.16</hutool.version>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -111,6 +112,12 @@
                 <groupId>io.jsonwebtoken</groupId>
                 <artifactId>jjwt</artifactId>
                 <version>${jjwt.version}</version>
+            </dependency>
+            <!--hutool-->
+            <dependency>
+                <groupId>cn.hutool</groupId>
+                <artifactId>hutool-all</artifactId>
+                <version>${hutool.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>
