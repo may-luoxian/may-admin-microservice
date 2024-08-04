@@ -80,7 +80,6 @@ public class AuthorizeFilter implements GlobalFilter, Ordered {
         validResourceDTO.setMethod(method);
         Mono<String> validateResources = authClient.validateResources(validResourceDTO);
 
-
         return validateResources.flatMap(e -> {
             System.out.println("feignClient请求结果是:" + e);
             JSONObject jsonObject = JSON.parseObject(e);
