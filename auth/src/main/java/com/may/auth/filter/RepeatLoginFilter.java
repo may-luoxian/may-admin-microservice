@@ -19,7 +19,7 @@ import java.util.Date;
 import java.util.Objects;
 import java.util.Optional;
 
-import static com.may.auth.constant.AuthConstant.*;
+import static com.may.utils.constant.AuthConstant.*;
 
 @Component
 public class RepeatLoginFilter extends OncePerRequestFilter {

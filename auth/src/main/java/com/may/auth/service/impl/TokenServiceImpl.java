@@ -1,5 +1,6 @@
 package com.may.auth.service.impl;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.may.auth.model.dto.UserDetailsDTO;
 import com.may.auth.service.TokenService;
 import com.may.utils.feignapi.RedisClient;
@@ -21,7 +22,7 @@ import java.util.Date;
 import java.util.Optional;
 import java.util.UUID;
 
-import static com.may.auth.constant.AuthConstant.*;
+import static com.may.utils.constant.AuthConstant.*;
 import static com.may.utils.constant.RedisConstant.LOGIN_USER;
 
 @Service
@@ -96,7 +97,10 @@ public class TokenServiceImpl implements TokenService {
         if (StringUtils.hasText(token) && !token.equals("null")) {
             Claims claims = parseToken(token);
             String userId = claims.getSubject();
-            return (UserDetailsDTO) redisClient.hGet(LOGIN_USER, userId);
+            Object o = redisClient.hGet(LOGIN_USER, userId);
+            ObjectMapper objectMapper = new ObjectMapper();
+            UserDetailsDTO userDetailsDTO = objectMapper.convertValue(o, UserDetailsDTO.class);
+            return userDetailsDTO;
         }
         return null;
     }

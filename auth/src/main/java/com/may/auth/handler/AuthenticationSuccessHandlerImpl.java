@@ -9,6 +9,8 @@ import com.may.auth.service.TokenService;
 import com.may.auth.utils.UserUtil;
 import com.may.utils.Bean.BeanCopyUtil;
 import com.may.utils.constant.CommonConstant;
+import com.may.utils.getuserdetails.UserInfoContext;
+import com.may.utils.model.dto.UserDetailsShareDTO;
 import com.may.utils.model.vo.ResultVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Async;

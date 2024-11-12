@@ -25,3 +25,7 @@ spring:
           uri: lb://management-center # 路由的目标地址 lb：loadbalance负载均衡
           predicates: # 路由断言，判断请求是否符合规则
             - Path=/management-center/** # management-center开头的路由转发给management-center服务
+        - id: oj
+          uri: lb://oj
+          predicates:
+            - Path=/oj/**

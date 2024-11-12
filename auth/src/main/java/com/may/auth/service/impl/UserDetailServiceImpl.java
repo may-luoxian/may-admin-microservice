@@ -8,8 +8,11 @@ import com.may.auth.mapper.RoleMapper;
 import com.may.auth.mapper.UserAuthMapper;
 import com.may.auth.mapper.UserInfoMapper;
 import com.may.auth.model.dto.UserDetailsDTO;
-import com.may.utils.IpUtil;
+import com.may.auth.utils.IpUtil;
+import com.may.utils.Bean.BeanCopyUtil;
 import com.may.utils.exception.BizException;
+import com.may.utils.getuserdetails.UserInfoContext;
+import com.may.utils.model.dto.UserDetailsShareDTO;
 import eu.bitwalker.useragentutils.UserAgent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -45,6 +48,7 @@ public class UserDetailServiceImpl implements UserDetailsService {
         if (Objects.isNull(userAuth)) {
             throw new BizException("用户不存在");
         }
+
         return convertUserDetail(userAuth, request);
     }
 

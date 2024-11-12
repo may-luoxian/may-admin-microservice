@@ -19,7 +19,9 @@ import org.springframework.core.io.buffer.DataBuffer;
 import org.springframework.core.io.buffer.DataBufferFactory;
 import org.springframework.core.io.buffer.DataBufferUtils;
 import org.springframework.core.io.buffer.DefaultDataBufferFactory;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
+import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.http.server.reactive.ServerHttpResponseDecorator;
 import org.springframework.stereotype.Component;
@@ -39,6 +41,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.may.utils.constant.AuthConstant.TOKEN_HEADER;
+
 
 /**
  * 鉴权过滤器
@@ -52,11 +56,10 @@ public class AuthorizeFilter implements GlobalFilter, Ordered {
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-        //TODO:Auth模块未完成，暂时注掉身份认证
-
         // 获取身份验证所需参数
         String method = exchange.getRequest().getMethod().toString();
         String url = exchange.getRequest().getURI().toString();
+        String token = exchange.getRequest().getHeaders().getFirst(TOKEN_HEADER);
         URL urlObject;
         try {
             urlObject = new URL(url);
@@ -78,16 +81,19 @@ public class AuthorizeFilter implements GlobalFilter, Ordered {
         ValidResourceDTO validResourceDTO = new ValidResourceDTO();
         validResourceDTO.setUrl(path);
         validResourceDTO.setMethod(method);
-        Mono<String> validateResources = authClient.validateResources(validResourceDTO);
+        Mono<String> validateResources = authClient.validateResources(validResourceDTO, token);
 
         return validateResources.flatMap(e -> {
             System.out.println("feignClient请求结果是:" + e);
             JSONObject jsonObject = JSON.parseObject(e);
-            String code = jsonObject.getString("code");
+            String code1 = jsonObject.getString("code");
+            int code = Integer.parseInt(code1);
             String message = jsonObject.getString("message");
             Boolean flag = jsonObject.getBoolean("flag");
-            if (code == "20000") {
-                return chain.filter(exchange);
+            if (code == 20000) {
+                ServerHttpRequest request = exchange.getRequest().mutate().header(TOKEN_HEADER, token).build();
+                ServerWebExchange newExchange = exchange.mutate().request(request).build();
+                return chain.filter(newExchange);
             } else {
                 return Mono.defer(() -> {
                     Map<String, Object> resultMap = new HashMap<>();
