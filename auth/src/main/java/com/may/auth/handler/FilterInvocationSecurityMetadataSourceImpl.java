@@ -9,6 +9,7 @@ import org.springframework.security.access.ConfigAttribute;
 import org.springframework.security.access.SecurityConfig;
 import org.springframework.security.web.FilterInvocation;
 import org.springframework.security.web.access.intercept.FilterInvocationSecurityMetadataSource;
+import org.springframework.stereotype.Component;
 import org.springframework.util.AntPathMatcher;
 
 import javax.annotation.PostConstruct;
@@ -17,6 +18,7 @@ import java.io.IOException;
 import java.util.Collection;
 import java.util.List;
 
+@Component
 public class FilterInvocationSecurityMetadataSourceImpl implements FilterInvocationSecurityMetadataSource {
     @Autowired
     private RoleMapper roleMapper;
@@ -42,25 +44,32 @@ public class FilterInvocationSecurityMetadataSourceImpl implements FilterInvocat
         FilterInvocation fi = (FilterInvocation) object;
 
         // 读取请求参数
-//        BufferedReader reader;
-//        StringBuilder builder = new StringBuilder();
-//        try {
-//            reader = fi.getRequest().getReader();
-//            String line = reader.readLine();
-//            while(line != null){
-//                builder.append(line);
-//                line = reader.readLine();
-//            }
-//            reader.close();
-//        } catch (IOException e) {
-//            throw new RuntimeException(e);
-//        }
-//        String reqBody = builder.toString();
-//        JSONObject jsonObject = JSONObject.parseObject(reqBody);
-//        String url = jsonObject.getString("url");
-//        String method = jsonObject.getString("method");
-        String method = fi.getRequest().getMethod();
-        String url = fi.getRequest().getRequestURI();
+        BufferedReader reader;
+        StringBuilder builder = new StringBuilder();
+        try {
+            reader = fi.getRequest().getReader();
+            String line = reader.readLine();
+            while(line != null){
+                builder.append(line);
+                line = reader.readLine();
+            }
+            reader.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+        String reqBody = builder.toString();
+        JSONObject jsonObject = JSONObject.parseObject(reqBody);
+        String url = null;
+        String method = null;
+        String requestURI = fi.getRequest().getRequestURI();
+        if (requestURI.equals("/validateResource")) {
+            url = jsonObject.getString("url");
+            method = jsonObject.getString("method");
+        }
+        else {
+            url = fi.getRequest().getRequestURI();
+            method = fi.getRequest().getMethod();
+        }
         AntPathMatcher antPathMatcher = new AntPathMatcher();
         for (ResourceRoleDTO resourceRoleDTO : resourceRoleList) {
             if (antPathMatcher.match(resourceRoleDTO.getUrl(), url) && resourceRoleDTO.getRequestMethod().equals(method)) {

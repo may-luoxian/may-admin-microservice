@@ -1,5 +1,6 @@
 package com.may.managementcenter;
 
+import com.may.utils.feignapi.AuthResourceClient;
 import com.may.utils.feignapi.RedisClient;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
@@ -9,7 +10,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 /**
  * 系统管理中心
  */
-@EnableFeignClients(clients = {RedisClient.class})
+@EnableFeignClients(clients = {RedisClient.class, AuthResourceClient.class})
 @SpringBootApplication
 @MapperScan("com.may.managementcenter.mapper")
 public class ManagementCenterApplication {
