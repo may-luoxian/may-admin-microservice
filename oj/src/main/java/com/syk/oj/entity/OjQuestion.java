@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * oj模块-题目
@@ -32,19 +33,34 @@ public class OjQuestion implements Serializable {
     private String title;
 
     /**
+     * 难度
+     */
+    private Integer difficulty;
+
+    /**
      * 题目内容
      */
     private String content;
 
     /**
-     * 题目标签（json数组）
+     * 主函数代码
      */
-    private String tags;
+    private String mainCode;
 
     /**
-     * 标准答案
+     * 题目模板
+     */
+    private String questionTemplate;
+
+    /**
+     * 题解
      */
     private String answer;
+
+    /**
+     * 正确代码
+     */
+    private String answerCode;
 
     /**
      * 题目提交数

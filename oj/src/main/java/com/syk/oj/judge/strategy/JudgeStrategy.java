@@ -13,4 +13,6 @@ public interface JudgeStrategy {
      * @return
      */
     JudgeInfo doJudge(JudgeContext judgeContext);
+
+    JudgeInfo doDebug(JudgeContext judgeContext);
 }

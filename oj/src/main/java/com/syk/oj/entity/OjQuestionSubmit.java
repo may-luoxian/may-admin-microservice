@@ -30,7 +30,7 @@ public class OjQuestionSubmit {
     private Integer questionId;
 
     /**
-     * 创建用户id
+     * 提交用户id
      */
     private Integer userInfoId;
 
@@ -55,6 +55,11 @@ public class OjQuestionSubmit {
      * ]
      */
     private String judgeInfo;
+
+    /**
+     * 判题结果
+     */
+    private Integer result;
 
     /**
      * 判题状态 （0：待判题，1：判题中，2：成功，3：失败）

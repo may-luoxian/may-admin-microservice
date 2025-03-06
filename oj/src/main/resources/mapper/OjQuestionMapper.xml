@@ -4,11 +4,10 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.syk.oj.mapper.OjQuestionMapper">
 
-    <resultMap id="BaseResultMap" type="com.syk.oj.entity.OjQuestion">
+    <resultMap id="OjQuestionResultMap" type="com.syk.oj.entity.OjQuestion">
         <id property="id" column="id" jdbcType="BIGINT"/>
         <result property="title" column="title" jdbcType="VARCHAR"/>
         <result property="content" column="content" jdbcType="VARCHAR"/>
-        <result property="tags" column="tags" jdbcType="VARCHAR"/>
         <result property="answer" column="answer" jdbcType="VARCHAR"/>
         <result property="submitNum" column="submit_num" jdbcType="INTEGER"/>
         <result property="acceptNum" column="accept_num" jdbcType="INTEGER"/>
@@ -20,38 +19,130 @@
         <result property="isDelete" column="is_delete" jdbcType="TINYINT"/>
     </resultMap>
 
-    <sql id="Base_Column_List">
-        id,title,content,
-        tags,answer,submit_num,
-        accept_num,judge_config,judge_case,
-        user_id,create_time,update_time,
-        is_delete
-    </sql>
+    <resultMap id="OjTagResultMap" type="com.syk.oj.entity.OjTag">
+        <result property="id" column="tagId" jdbcType="BIGINT" />
+        <result property="tag" column="tag" jdbcType="VARCHAR" />
+        <result property="citationCount" column="citation_count" jdbcType="INTEGER" />
+    </resultMap>
 
-    <select id="selectQuestionList" resultMap="BaseResultMap">
-        SELECT id,
-               title,
-               tags,
-               submit_num,
-               accept_num,
-               judge_config,
-               judge_case,
-               create_time,
-               update_time
-        FROM oj_question
-        WHERE is_delete != 1
+    <resultMap id="OjQuestionDTOResultMap" type="com.syk.oj.model.dto.OjQuestionDTO">
+        <id property="id" column="id" jdbcType="BIGINT"/>
+        <result property="title" column="title" jdbcType="VARCHAR"/>
+        <result property="difficulty" column="difficulty" jdbcType="INTEGER"/>
+        <result property="content" column="content" jdbcType="VARCHAR"/>
+        <result property="mainCode" column="main_code" jdbcType="VARCHAR"/>
+        <result property="answer" column="answer" jdbcType="VARCHAR"/>
+        <result property="answerCode" column="answer_code" jdbcType="VARCHAR"/>
+        <result property="questionTemplate" column="question_template" jdbcType="VARCHAR"/>
+        <result property="submitNum" column="submit_num" jdbcType="INTEGER"/>
+        <result property="acceptNum" column="accept_num" jdbcType="INTEGER"/>
+        <result property="acceptRate" column="accept_rate" jdbcType="DECIMAL"/>
+        <result property="judgeConfigStr" column="judge_config" jdbcType="VARCHAR"/>
+        <result property="judgeCaseStr" column="judge_case" jdbcType="VARCHAR"/>
+        <result property="userId" column="user_id" jdbcType="BIGINT"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="isDelete" column="is_delete" jdbcType="TINYINT"/>
+        <collection property="tags" ofType="com.syk.oj.entity.OjTag" resultMap="OjTagResultMap" />
+    </resultMap>
+
+    <select id="selectQuestionList" resultMap="OjQuestionDTOResultMap">
+        SELECT oq.id,
+        title,
+        difficulty,
+        submit_num,
+        accept_num,
+        CASE
+            WHEN submit_num = 0 THEN 0
+            ELSE ROUND((CAST(accept_num AS FLOAT) / submit_num), 2)
+        END AS accept_rate,
+        judge_config,
+        judge_case,
+        create_time,
+        update_time,
+        ot.id AS tagId, tag, citation_count
+        FROM oj_question oq
+        LEFT JOIN oj_question_tag oqt ON oq.id = oqt.question_id
+        LEFT JOIN oj_tag ot ON oqt.tag_id = ot.id
+        <where>
+            <if test="ojQuestionVO.title != null and ojQuestionVO.title != ''">
+                title = #{ojQuestionVO.title}
+            </if>
+            <if test="ojQuestionVO.difficulty != null">
+                AND difficulty = #{ojQuestionVO.difficulty}
+            </if>
+            <if test="ojQuestionVO.selTag != null">
+                AND ot.id = #{ojQuestionVO.selTag}
+            </if>
+            AND is_delete != 1
+            LIMIT #{current}, #{size}
+        </where>
     </select>
 
-    <select id="selectQuestionById" resultMap="BaseResultMap">
-        SELECT id,
+    <select id="selectQuestionCount" resultType="long">
+        SELECT COUNT(*)
+        FROM oj_question oq
+        LEFT JOIN oj_question_tag oqt ON oq.id = oqt.question_id
+        LEFT JOIN oj_tag ot ON oqt.tag_id = ot.id
+        <where>
+            <if test="ojQuestionVO.title != null and ojQuestionVO.title != ''">
+                title = #{ojQuestionVO.title}
+            </if>
+            <if test="ojQuestionVO.difficulty != null">
+                AND difficulty = #{ojQuestionVO.difficulty}
+            </if>
+            <if test="ojQuestionVO.selTag != null">
+                AND ot.id = #{ojQuestionVO.selTag}
+            </if>
+            AND is_delete != 1
+        </where>
+    </select>
+
+    <select id="selectQuestionById" resultMap="OjQuestionDTOResultMap">
+        SELECT oq.id,
                title,
+               difficulty,
+               submit_num,
+               accept_num,
+               CASE
+                   WHEN submit_num = 0 THEN 0
+                   ELSE ROUND((CAST(accept_num AS FLOAT) / submit_num), 2)
+                   END AS accept_rate,
                content,
-               tags,
+               answer,
+               answer_code,
                judge_case,
+               main_code,
+               question_template,
+               judge_config,
                user_id,
                create_time,
-               update_time
-        FROM oj_question
-        WHERE id = #{id}
+               update_time,
+               ot.id AS tagId, tag, citation_count
+        FROM oj_question oq
+        LEFT JOIN oj_question_tag oqt ON oq.id = oqt.question_id
+        LEFT JOIN oj_tag ot ON oqt.tag_id = ot.id
+        WHERE oq.id = #{id}
+    </select>
+
+    <select id="selectQuestionByIds" resultMap="OjQuestionDTOResultMap">
+        SELECT oq.id,
+               title,
+               difficulty,
+               content,
+               answer,
+               judge_case,
+               judge_config,
+               user_id,
+               create_time,
+               update_time,
+               ot.id AS tagId, tag, citation_count
+        FROM oj_question oq
+                 LEFT JOIN oj_question_tag oqt ON oq.id = oqt.question_id
+                 LEFT JOIN oj_tag ot ON oqt.tag_id = ot.id
+        WHERE oq.id IN
+        <foreach item="id" collection="ids" index="index" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
     </select>
 </mapper>

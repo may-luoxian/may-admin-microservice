@@ -6,6 +6,7 @@ import com.syk.oj.judge.codesandbox.impl.RemoteCodeSandBox;
 import com.syk.oj.judge.codesandbox.impl.ThirdPartyCodeSandBox;
 
 /**
+ * ATTENTION: 工厂模式
  * 代码沙箱工厂（根据字符串参数创建指定的代码沙箱实例）
  */
 public class CodeSandBoxFactory {

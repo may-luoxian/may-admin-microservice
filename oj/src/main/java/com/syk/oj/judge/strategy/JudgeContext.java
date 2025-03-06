@@ -23,5 +23,19 @@ public class JudgeContext {
 
     private OjQuestion ojQuestion;
 
+    // 沙箱返回信息
+    private String sandboxMessage;
+
+    // 沙箱判题状态
+    private Integer sandboxState;
+
     private OjQuestionSubmit ojQuestionSubmit;
+
+    /**
+     * 下方属性为debug专用
+     */
+
+    private String language;
+
+    private String correctAnswer;
 }

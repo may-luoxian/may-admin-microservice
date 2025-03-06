@@ -2,9 +2,11 @@ package com.syk.oj.controller;
 
 import com.may.utils.exception.BizException;
 import com.may.utils.getuserdetails.UserInfoContext;
+import com.may.utils.model.dto.PageResultDTO;
 import com.may.utils.model.vo.ResultVO;
 import com.syk.oj.entity.OjQuestion;
 import com.syk.oj.model.dto.OjQuestionDTO;
+import com.syk.oj.model.vo.OjQuestionVO;
 import com.syk.oj.service.OjQuestionService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -24,49 +26,29 @@ public class OjQuestionControl {
 
     @ApiOperation("添加题目")
     @PostMapping("/")
-    public ResultVO<Integer> addQuestion(@RequestBody OjQuestionDTO ojQuestionDTO) {
-        OjQuestion ojQuestion = ojQuestionService.copyQuestion(ojQuestionDTO);
-        // 验证题目是否符合规范
-        ojQuestionService.validateQuestion(ojQuestion, true);
-
-        Integer userId = UserInfoContext.getUser().getUserInfoId();
-        ojQuestion.setUserId(userId);
-        boolean save = ojQuestionService.save(ojQuestion);
-        if (!save) {
-            throw new BizException("题目添加失败");
-        }
-        Integer questionId = ojQuestion.getId();
+    public ResultVO<Integer> addQuestion(@RequestBody OjQuestionVO ojQuestionVO) {
+        Integer questionId = ojQuestionService.addQuestion(ojQuestionVO);
         return ResultVO.ok(questionId);
     }
 
     @ApiOperation("修改题目")
     @PutMapping("/")
-    public ResultVO<Integer> updateQuestion(@RequestBody OjQuestionDTO ojQuestionDTO) {
-        OjQuestion ojQuestion = ojQuestionService.copyQuestion(ojQuestionDTO);
-        // 验证题目是否符合规范
-        ojQuestionService.validateQuestion(ojQuestion, false);
-
-        Integer userId = UserInfoContext.getUser().getUserInfoId();
-        ojQuestion.setUserId(userId);
-        boolean update = ojQuestionService.updateById(ojQuestion);
-        if (!update) {
-            throw new BizException("题目修改失败");
-        }
-        Integer questionId = ojQuestion.getId();
+    public ResultVO<Integer> updateQuestion(@RequestBody OjQuestionVO ojQuestionVO) {
+        Integer questionId = ojQuestionService.updateQuestion(ojQuestionVO);
         return ResultVO.ok(questionId);
     }
 
     @ApiOperation("删除题目")
     @DeleteMapping("/")
-    public ResultVO<Boolean> deleteQuestion(@RequestBody List<Integer> ids) {
-        boolean b = ojQuestionService.removeByIds(ids);
-        return ResultVO.ok(b);
+    public ResultVO<Integer> deleteQuestion(@RequestBody List<Integer> ids) {
+        int i = ojQuestionService.removeQuestions(ids);
+        return ResultVO.ok(i);
     }
 
     @ApiOperation("查询题目列表")
     @GetMapping("/")
-    public ResultVO<List<OjQuestionDTO>> selectQuestions() {
-        List<OjQuestionDTO> ojQuestionDTOS = ojQuestionService.selectQuestionList();
+    public ResultVO<PageResultDTO<OjQuestionDTO>> selectQuestions(OjQuestionVO ojQuestionVO) {
+        PageResultDTO<OjQuestionDTO> ojQuestionDTOS = ojQuestionService.selectQuestionList(ojQuestionVO);
         return ResultVO.ok(ojQuestionDTOS);
     }
 

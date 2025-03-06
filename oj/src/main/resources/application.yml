@@ -1,3 +1,6 @@
 server:
   port: 8085
 
+# 代码沙箱配置
+codeSandBox:
+  type: remote

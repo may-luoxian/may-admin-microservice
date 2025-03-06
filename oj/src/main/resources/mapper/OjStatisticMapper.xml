@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.syk.oj.mapper.OjStatisticMapper">
+
+    <resultMap id="AcRateResultMap" type="com.syk.oj.model.dto.AcRateDTO">
+        <result property="accept" column="accept" jdbcType="INTEGER"/>
+        <result property="sum" column="sum" jdbcType="INTEGER"/>
+        <result property="createTime" column="create_time" jdbcType="DATE"/>
+    </resultMap>
+
+    <resultMap id="RankResultMap" type="com.syk.oj.model.dto.RankDTO">
+        <result property="nickname" column="nickname" jdbcType="VARCHAR"/>
+        <result property="acceptNum" column="acceptNum" jdbcType="INTEGER"/>
+        <result property="submitNum" column="submitNum" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <resultMap id="CalendarResultMap" type="com.syk.oj.model.dto.CalendarDTO">
+        <result property="submitNum" column="submitNum" jdbcType="INTEGER"/>
+        <result property="date" column="date" jdbcType="DATE"/>
+    </resultMap>
+
+    <select id="selectAcRate" resultMap="AcRateResultMap">
+        SELECT
+        sum(CASE WHEN result = 1 THEN 1 ELSE 0 END) AS accept,
+        count(*) AS `sum`,
+        Date(create_time) AS create_time
+        FROM oj_question_submit
+        WHERE DATE(create_time) > CURDATE() - INTERVAL 7 DAY
+        GROUP BY Date(create_time);
+    </select>
+
+    <select id="selectRank" resultMap="RankResultMap">
+        SELECT
+            nickname,
+            SUM(CASE WHEN result = 1 THEN 1 ELSE 0 END) as acceptNum,
+            COUNT(nickname) as submitNum
+        FROM
+            `t_user_info` ui
+                LEFT JOIN oj_question_submit qs ON ui.id = qs.user_info_id
+        GROUP BY nickname
+        ORDER BY acceptNum DESC
+        LIMIT 10
+    </select>
+
+    <select id="selectCalendar" resultMap="CalendarResultMap">
+        WITH RECURSIVE
+            DateSeries AS (SELECT DATE(#{startDate}) AS date
+                           UNION ALL
+                           SELECT DATE_ADD(date, INTERVAL 1 DAY)
+                           FROM DateSeries
+                           WHERE date
+                                     &lt;
+                                 #{endDate}),
+            DailyCounts AS (SELECT ds.date,
+                                   COUNT(qs.user_info_id) AS submitNum
+                            FROM DateSeries ds
+                                     LEFT JOIN
+                                 oj_question_submit qs ON DATE(qs.create_time) = ds.date AND qs.user_info_id = #{id}
+                            GROUP BY ds.date)
+        SELECT date,
+               submitNum
+        FROM DailyCounts
+        ORDER BY date;
+    </select>
+</mapper>

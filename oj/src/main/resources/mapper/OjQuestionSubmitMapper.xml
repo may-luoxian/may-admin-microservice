@@ -4,15 +4,53 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.syk.oj.mapper.OjQuestionSubmitMapper">
 
-    <resultMap id="BaseResultMap" type="com.syk.oj.model.dto.OjQuestionSubmitDTO">
-            <result property="questionId" column="question_id" jdbcType="BIGINT"/>
-            <result property="userInfoId" column="user_info_id" jdbcType="BIGINT"/>
-            <result property="language" column="language" jdbcType="VARCHAR"/>
-            <result property="code" column="code" jdbcType="VARCHAR"/>
-            <result property="judgeInfo" column="judge_info" jdbcType="VARCHAR"/>
-            <result property="status" column="status" jdbcType="INTEGER"/>
-            <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
-            <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
-            <result property="isDelete" column="is_delete" jdbcType="TINYINT"/>
+    <resultMap id="SubmissionRecordResultMap" type="com.syk.oj.model.dto.SubmissionRecordDTO">
+        <id property="id" column="id" jdbcType="INTEGER"/>
+        <result property="title" column="title" jdbcType="VARCHAR"/>
+        <result property="questionId" column="question_id" jdbcType="BIGINT"/>
+        <result property="userInfoId" column="user_info_id" jdbcType="BIGINT"/>
+        <result property="language" column="language" jdbcType="VARCHAR"/>
+        <result property="judgeInfoJson" column="judge_info" jdbcType="VARCHAR"/>
+        <result property="status" column="status" jdbcType="INTEGER"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
     </resultMap>
+
+        <select id="querySubmissionRecord" resultMap="SubmissionRecordResultMap">
+            SELECT oqs.id,
+            oqs.question_id,
+            user_info_id,
+            `language`,
+            judge_info,
+            `status`,
+            oqs.create_time,
+            oq.title,
+            tui.nickname
+            FROM `oj_question_submit` oqs
+            LEFT JOIN oj_question oq ON oqs.question_id = oq.id
+            LEFT JOIN t_user_info tui ON oqs.user_info_id = tui.id
+            <where>
+                <if test="submissionRecordVO.nickname != null and submissionRecordVO.nickname != ''">
+                    tui.nickname LIKE CONCAT('%', #{submissionRecordVO.nickname}, '%')
+                </if>
+                <if test="submissionRecordVO.title != null and submissionRecordVO.title != ''">
+                    AND oq.title LIKE CONCAT('%', #{submissionRecordVO.title}, '%')
+                </if>
+            </where>
+            ORDER BY oqs.create_time DESC
+            LIMIT #{current}, #{size}
+        </select>
+
+    <select id="querySubmissionRecordCount" resultType="long">
+        SELECT COUNT(*) FROM `oj_question_submit` oqs
+        LEFT JOIN oj_question oq ON oqs.question_id = oq.id
+        LEFT JOIN t_user_info tui ON oqs.user_info_id = tui.id
+        <where>
+            <if test="submissionRecordVO.nickname != null and submissionRecordVO.nickname != ''">
+                tui.nickname LIKE CONCAT('%', #{submissionRecordVO.nickname}, '%')
+            </if>
+            <if test="submissionRecordVO.title != null and submissionRecordVO.title != ''">
+                AND oq.title LIKE CONCAT('%', #{submissionRecordVO.title}, '%')
+            </if>
+        </where>
+    </select>
 </mapper>

@@ -15,12 +15,12 @@ public class ExecuteCodeResponse {
     private List<String> outputList;
 
     /**
-     * 接口信息
+     * 判题接口信息
      */
     private String message;
 
     /**
-     * 执行状态
+     * 沙箱执行状态
      */
     private Integer status;
 

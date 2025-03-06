@@ -16,5 +16,7 @@ public class ExecuteCodeRequest {
 
     private String code;
 
+    private String mainCode;
+
     private String language;
 }

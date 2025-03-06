@@ -10,9 +10,9 @@ public enum QuestionSubStateEnum {
 
     IN_PROCESS(1, "判题中"),
 
-    SUCCESS(2, "成功"),
+    SUCCESS(2, "已完成"),
 
-    FAIL(3, "失败");
+    FAIL(3, "判题出错");
 
     private Integer value;
 

@@ -1,8 +1,10 @@
 package com.syk.oj.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
+import com.may.utils.model.dto.PageResultDTO;
 import com.syk.oj.entity.OjQuestion;
 import com.syk.oj.model.dto.OjQuestionDTO;
+import com.syk.oj.model.vo.OjQuestionVO;
 
 import java.util.List;
 
@@ -14,11 +16,17 @@ import java.util.List;
 public interface OjQuestionService extends IService<OjQuestion> {
     void validateQuestion(OjQuestion ojQuestion, boolean add);
 
-    OjQuestion copyQuestion(OjQuestionDTO ojQuestionDTO);
+    OjQuestion copyQuestion(OjQuestionVO ojQuestionVO);
 
-    OjQuestionDTO copyOjQuestionDTO(OjQuestion ojQuestion);
+    Integer addQuestion(OjQuestionVO ojQuestionVO);
 
-    List<OjQuestionDTO> selectQuestionList();
+    Integer updateQuestion(OjQuestionVO ojQuestionVO);
+
+    int removeQuestions(List<Integer> ids);
+
+    OjQuestionDTO copyOjQuestionDTO(OjQuestionDTO ojQuestionDTO);
+
+    PageResultDTO<OjQuestionDTO> selectQuestionList(OjQuestionVO ojQuestionVO);
 
     OjQuestionDTO selectQuestionById(Integer id);
 }

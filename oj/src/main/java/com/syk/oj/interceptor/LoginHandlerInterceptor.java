@@ -1,4 +1,4 @@
-package com.syk.oj.filter;
+package com.syk.oj.interceptor;
 
 import com.alibaba.fastjson.JSON;
 import com.may.utils.feignapi.RedisClient;

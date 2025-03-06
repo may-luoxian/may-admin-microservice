@@ -5,12 +5,14 @@ import com.syk.oj.judge.codesandbox.CodeSandBox;
 import com.syk.oj.judge.codesandbox.model.ExecuteCodeRequest;
 import com.syk.oj.judge.codesandbox.model.ExecuteCodeResponse;
 import com.syk.oj.judge.codesandbox.model.JudgeInfo;
+import org.springframework.stereotype.Component;
 
 import java.util.Arrays;
 
 /**
  * 示例代码沙箱
  */
+@Component
 public class ExampleCodeSandBox implements CodeSandBox {
     @Override
     public ExecuteCodeResponse executeCode(ExecuteCodeRequest executeCodeRequest) {
