@@ -1,10 +1,14 @@
 package com.may.managementcenter.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
+import lombok.Builder;
+import lombok.Data;
 
 import java.time.LocalDateTime;
 
 //用户信息
+@Data
+@Builder
 @TableName("t_user_info")
 public class UserInfo {
     @TableId(value = "id", type = IdType.AUTO)

@@ -1,10 +1,16 @@
 package com.may.utils.model.dto;
 
+import java.util.List;
+
 public class RedisSetDTO {
     private String key;
     private String hashKey;
     private Object value;
     private long time;
+
+
+
+    private List<Object> values;
 
     public RedisSetDTO() {
     }
@@ -46,5 +52,13 @@ public class RedisSetDTO {
 
     public void setTime(long time) {
         this.time = time;
+    }
+
+    public List<Object> getValues() {
+        return values;
+    }
+
+    public void setValues(List<Object> values) {
+        this.values = values;
     }
 }

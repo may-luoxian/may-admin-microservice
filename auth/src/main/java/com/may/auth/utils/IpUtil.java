@@ -7,7 +7,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.lionsoul.ip2region.DataBlock;
 import org.lionsoul.ip2region.DbConfig;
 import org.lionsoul.ip2region.DbSearcher;
-import org.lionsoul.ip2region.Util;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 import org.springframework.util.FileCopyUtils;
@@ -70,7 +69,11 @@ public class IpUtil {
     }
 
     public static String getIpSource(String ipAddress) {
-        if (ipAddress == null || !Util.isIpAddress(ipAddress)) {
+//        if (ipAddress == null || !Util.isIpAddress(ipAddress)) {
+//            log.error("Error: Invalid ip address");
+//            return "";
+//        }
+        if (ipAddress == null) {
             log.error("Error: Invalid ip address");
             return "";
         }

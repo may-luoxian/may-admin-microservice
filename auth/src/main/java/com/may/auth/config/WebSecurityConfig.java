@@ -1,7 +1,6 @@
 package com.may.auth.config;
 
 import com.may.auth.filter.JwtAuthenticationTokenFilter;
-import com.may.auth.filter.RepeatLoginFilter;
 import com.may.auth.handler.AccessDecisionManagerImpl;
 import com.may.auth.handler.FilterInvocationSecurityMetadataSourceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,8 +35,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private AccessDeniedHandler accessDeniedHandler;
     @Autowired
     private JwtAuthenticationTokenFilter jwtAuthenticationTokenFilter;
-    @Autowired
-    private RepeatLoginFilter repeatLoginFilter;
     @Bean
     public FilterInvocationSecurityMetadataSource securityMetadataSource() {
         return new FilterInvocationSecurityMetadataSourceImpl();
@@ -76,6 +73,5 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS);
         // 前置拦截器，当收到请求时，进行处理
         http.addFilterBefore(jwtAuthenticationTokenFilter, UsernamePasswordAuthenticationFilter.class);
-//                .addFilterBefore(repeatLoginFilter, JwtAuthenticationTokenFilter.class);
     }
 }

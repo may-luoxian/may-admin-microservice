@@ -12,6 +12,9 @@ public class ConditionVO {
     @ApiModelProperty(name = "keywords", value = "查询关键字", dataType = "String")
     private String keywords;
 
+    @ApiModelProperty(name = "type", value = "类型", dataType = "Integer")
+    private Integer type;
+
     public ConditionVO() {
     }
 
@@ -43,5 +46,13 @@ public class ConditionVO {
 
     public void setKeywords(String keywords) {
         this.keywords = keywords;
+    }
+
+    public Integer getType() {
+        return type;
+    }
+
+    public void setType(Integer type) {
+        this.type = type;
     }
 }

@@ -11,6 +11,8 @@ public enum StatusCodeEnum {
 
     SYSTEM_ERROR(50000, "系统异常"),
 
+    API_REQUEST_ERROR(50010, "接口调用异常"),
+
     FAIL(51000, "操作失败"),
 
     VALID_ERROR(52000, "参数格式不正确"),

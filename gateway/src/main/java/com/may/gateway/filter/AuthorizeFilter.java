@@ -112,47 +112,6 @@ public class AuthorizeFilter implements GlobalFilter, Ordered {
                     DataBuffer buffer = response.bufferFactory().wrap(bytes);
                     return response.writeWith(Flux.just(buffer));
                 });
-
-//                TODO:此处记录ServerHttpResponseDecorator重写
-//                ServerHttpResponse response = exchange.getResponse();
-//
-//                ServerHttpResponseDecorator decoratedResponse = new ServerHttpResponseDecorator(response) {
-//                    @Override
-//                    public Mono<Void> writeWith(Publisher<? extends DataBuffer> body) {
-//                        if (body instanceof Flux) {
-//                            Flux<? extends DataBuffer> fluxBody = Flux.from(body);
-//                            return super.writeWith(fluxBody.buffer().map(dataBuffers -> {
-//                                DataBufferFactory dataBufferFactory = new DefaultDataBufferFactory();
-//                                DataBuffer join = dataBufferFactory.join(dataBuffers);
-//                                byte[] content = new byte[join.readableByteCount()];
-//                                join.read(content);
-//                                DataBufferUtils.release(join);
-//                                String responseData = new String(content, StandardCharsets.UTF_8);
-//                                responseData = responseData.replaceAll(":null", ":\"\"");
-//                                byte[] uppedContent = responseData.getBytes(StandardCharsets.UTF_8);
-//
-////                                byte[] content = new byte[dataBuffer.readableByteCount()];
-////                                dataBuffer.read(content);
-////                                //释放掉内存
-////                                DataBufferUtils.release(dataBuffer);
-////                                String string = new String(content, StandardCharsets.UTF_8);
-////                                //修改response之后的字符串
-////                                String lastStr = JSON.parseObject(string, String.class);
-////                                byte[] bytes = lastStr.getBytes();
-//                                return dataBufferFactory.wrap(uppedContent);
-//                            }));
-//                        } else {
-//                            // if body is not a flux. never got there.
-//                            return super.writeWith(body);
-//                        }
-//
-//                    }
-//                };
-//
-//                byte[] bytes = e.getBytes();
-//                DataBuffer wrap = response.bufferFactory().wrap(bytes);
-//                Mono<Void> voidMono = decoratedResponse.writeWith(Flux.just(wrap));
-//                return voidMono;
             }
         });
     }

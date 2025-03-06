@@ -6,7 +6,7 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.may.managementcenter.entity.*;
 import com.may.managementcenter.mapper.*;
 import com.may.managementcenter.model.dto.LabelOptionDTO;
-import com.may.managementcenter.model.dto.PageResultDTO;
+import com.may.utils.model.dto.PageResultDTO;
 import com.may.managementcenter.model.dto.RoleDTO;
 import com.may.managementcenter.model.vo.MenuVO;
 import com.may.managementcenter.model.vo.RoleVO;

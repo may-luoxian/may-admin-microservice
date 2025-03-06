@@ -27,6 +27,7 @@
         <user-agent-utils.version>1.20</user-agent-utils.version>
         <validation.version>6.2.0.Final</validation.version>
         <easyexcel.version>2.2.8</easyexcel.version>
+        <javaxmlbind.version>2.3.1</javaxmlbind.version>
     </properties>
     <dependencyManagement>
         <dependencies>
@@ -153,6 +154,17 @@
                 <groupId>com.alibaba</groupId>
                 <artifactId>easyexcel</artifactId>
                 <version>${easyexcel.version}</version>
+            </dependency>
+            <!--javax.xml.bind-->
+            <dependency>
+                <groupId>javax.xml.bind</groupId>
+                <artifactId>jaxb-api</artifactId>
+                <version>${javaxmlbind.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.may.utils</groupId>
+                <artifactId>utils</artifactId>
+                <version>0.0.1-SNAPSHOT</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

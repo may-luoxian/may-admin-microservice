@@ -1,9 +1,13 @@
 package com.may.auth.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
+import lombok.Builder;
+import lombok.Data;
 
 import java.time.LocalDateTime;
 
+@Data
+@Builder
 @TableName("t_user_info")
 public class UserInfo {
     @TableId(value = "id", type = IdType.AUTO)

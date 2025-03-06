@@ -1,7 +1,7 @@
 package com.may.managementcenter.controller;
 
 import com.may.managementcenter.model.dto.LabelOptionDTO;
-import com.may.managementcenter.model.dto.PageResultDTO;
+import com.may.utils.model.dto.PageResultDTO;
 import com.may.managementcenter.model.dto.RoleDTO;
 import com.may.managementcenter.model.vo.MenuVO;
 import com.may.managementcenter.model.vo.ResourceVO;

@@ -1,17 +1,149 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.may.managementcenter.mapper.UserInfoMapper">
-    <resultMap id="UserInfoMap" type="com.may.managementcenter.entity.UserInfo">
+
+    <resultMap id="UserInfoMap" type="com.may.managementcenter.model.dto.UserAdminDTO">
         <id property="id" column="id"/>
-        <result property="email" column="email"/>
-        <result property="nickname" column="nickname"/>
+        <result property="userInfoId" column="user_info_id"/>
         <result property="avatar" column="avatar"/>
-        <result property="intro" column="intro"/>
-        <result property="website" column="website"/>
+        <result property="nickname" column="nickname"/>
+        <result property="username" column="username"/>
+        <result property="loginType" column="login_type"/>
+        <result property="ipAddress" column="ip_address"/>
+        <result property="ipSource" column="ip_source"/>
         <result property="createTime" column="create_time"/>
-        <result property="updateTime" column="update_time"/>
+        <result property="lastLoginTime" column="last_login_time"/>
+        <result property="isDisable" column="is_disable"/>
+        <collection property="roles" ofType="com.may.managementcenter.model.dto.UserRoleDTO">
+            <id property="id" column="role_id"/>
+            <result property="roleName" column="role_name"/>
+        </collection>
     </resultMap>
+
     <select id="selectUserInfoList" resultMap="UserInfoMap">
-        SELECT id, email, nickname, avatar, intro, website, create_time, update_time from may_blog.t_user_info
+        SELECT
+        ua.id,
+        user_info_id,
+        avatar,
+        nickname,
+        username,
+        login_type,
+        r.id as role_id,
+        role_name,
+        ip_address,
+        ip_source,
+        ua.create_time,
+        last_login_time,
+        ui.is_disable
+        FROM
+        (
+        SELECT
+        id,
+        avatar,
+        nickname,
+        is_disable
+        FROM
+        t_user_info
+        <where>
+            id in
+            (
+            SELECT
+            user_info_id
+            FROM
+            t_user_auth
+            <where>
+                <if test="userConditionVO.loginType != null">
+                    login_type = #{userConditionVO.loginType}
+                </if>
+                <if test="userConditionVO.username != null">
+                    and username like concat('%',#{userConditionVO.username},'%')
+                </if>
+                <if test="userConditionVO.nickname != null">
+                    and nickname like concat('%',#{userConditionVO.nickname},'%')
+                </if>
+            </where>
+            )
+        </where>
+        LIMIT #{current}, #{size}
+        ) ui
+        LEFT JOIN t_user_auth ua ON ua.user_info_id = ui.id
+        LEFT JOIN t_user_role ur ON ui.id = ur.user_id
+        LEFT JOIN t_role r ON ur.role_id = r.id
     </select>
+
+    <select id="countUser" resultType="java.lang.Long">
+        SELECT
+        count( 1 )
+        FROM
+        t_user_auth ua
+        LEFT JOIN t_user_info ui ON ua.user_info_id = ui.id
+        <where>
+            <if test="userConditionVO.nickname != null">
+                nickname like concat('%',#{conditionVO.nickname},'%')
+            </if>
+            <if test="userConditionVO.username != null">
+                and username like concat('%',#{conditionVO.username},'%')
+            </if>
+            <if test="userConditionVO.loginType != null">
+                and login_type = #{conditionVO.loginType}
+            </if>
+        </where>
+    </select>
+
+    <insert id="insertUserInfo" keyProperty="id" useGeneratedKeys="true">
+        INSERT INTO t_user_info
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="email != null and email != ''">
+                email,
+            </if>
+            <if test="nickname != null and nickname != ''">
+                nickname,
+            </if>
+            <if test="avatar != null and avatar != ''">
+                avatar,
+            </if>
+            <if test="intro != null and intro != ''">
+                intro,
+            </if>
+            <if test="website != null and website != ''">
+                website,
+            </if>
+            <if test="isSubscribe != null and isSubscribe != ''">
+                is_subscribe,
+            </if>
+            <if test="isDisable != null and isDisable != ''">
+                is_disable,
+            </if>
+            <if test="createTime != null">
+                create_time,
+            </if>
+        </trim>
+        VALUES
+        <trim prefix="(" suffix=")" suffixOverrides=",">
+            <if test="email != null and email != ''">
+                #{email},
+            </if>
+            <if test="nickname != null and nickname != ''">
+                #{nickname},
+            </if>
+            <if test="avatar != null and avatar != ''">
+                #{avatar},
+            </if>
+            <if test="intro != null and intro != ''">
+                #{intro},
+            </if>
+            <if test="website != null and website != ''">
+                #{website},
+            </if>
+            <if test="isSubscribe != null and isSubscribe != ''">
+                #{isSubscribe},
+            </if>
+            <if test="isDisable != null and isDisable != ''">
+                #{isDisable},
+            </if>
+            <if test="createTime != null">
+                #{createTime},
+            </if>
+        </trim>
+    </insert>
 </mapper>
