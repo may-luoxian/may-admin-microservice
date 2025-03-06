@@ -11,7 +11,7 @@
  Target Server Version : 80031 (8.0.31)
  File Encoding         : 65001
 
- Date: 18/12/2024 13:04:23
+ Date: 06/03/2025 21:32:35
 */
 
 SET NAMES utf8mb4;
@@ -39,14 +39,15 @@ CREATE TABLE `oj_question`  (
   `update_time` datetime NULL DEFAULT NULL COMMENT '更新时间',
   `is_delete` tinyint NOT NULL DEFAULT 0 COMMENT '是否删除',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 28 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = 'oj模块-题目' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 29 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_unicode_ci COMMENT = 'oj模块-题目' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of oj_question
 -- ----------------------------
-INSERT INTO `oj_question` VALUES (22, '回文数', '给你一个整数 ***x*** ，如果 **x** 是一个回文整数，返回 **true** ；否则，返回 **false**。\n\n*回文数*是指正序（从左向右）和倒序（从右向左）读都是一样的整数。\n\n例如，**121** 是回文，而 **123** 不是。\n \n## 示例 1：\n\n输入：x = 121\n输出：true\n\n## 示例 2：\n\n输入：x = -121\n输出：false\n解释：从左向右读, 为 -121 。 从右向左读, 为 121- 。因此它不是一个回文数。\n\n## 示例 3：\n\n输入：x = 10\n输出：false\n解释：从右向左读, 为 01 。因此它不是一个回文数。\n \n\n*提示：*\n- -231 <= x <= 231 - 1\n \n\n*进阶*：你能不将整数转为字符串来解决这个问题吗？', 'public static void main(String[]args){\n        Solution solution=new Solution();\n        int i=Integer.parseInt(args[0]);\n        boolean palindrome=solution.isPalindrome(i);\n        System.out.println(palindrome);\n}', 'public class Solution {\n    public boolean isPalindrome(int x) {\n    }\n}', '**方法一：反转一半数字**\n\n**思路**\n\n映入脑海的第一个想法是将数字转换为字符串，并检查字符串是否为回文。但是，这需要额外的非常量空间来创建问题描述中所不允许的字符串。\n\n第二个想法是将数字本身反转，然后将反转后的数字与原始数字进行比较，如果它们是相同的，那么这个数字就是回文。\n但是，如果反转后的数字大于 int.MAX，我们将遇到整数溢出问题。\n\n按照第二个想法，为了避免数字反转可能导致的溢出问题，为什么不考虑只反转 int 数字的一半？毕竟，如果该数字是回文，其后半部分反转后应该与原始数字的前半部分相同。\n\n例如，输入 1221，我们可以将数字 “1221” 的后半部分从 “21” 反转为 “12”，并将其与前半部分 “12” 进行比较，因为二者相同，我们得知数字 1221 是回文。\n\n**算法**\n\n首先，我们应该处理一些临界情况。所有负数都不可能是回文，例如：-123 不是回文，因为 - 不等于 3。所以我们可以对所有负数返回 false。除了 0 以外，所有个位是 0 的数字不可能是回文，因为最高位不等于 0。所以我们可以对所有大于 0 且个位是 0 的数字返回 false。\n\n现在，让我们来考虑如何反转后半部分的数字。\n\n对于数字 1221，如果执行 1221 % 10，我们将得到最后一位数字 1，要得到倒数第二位数字，我们可以先通过除以 10 把最后一位数字从 1221 中移除，1221 / 10 = 122，再求出上一步结果除以 10 的余数，122 % 10 = 2，就可以得到倒数第二位数字。如果我们把最后一位数字乘以 10，再加上倒数第二位数字，1 * 10 + 2 = 12，就得到了我们想要的反转后的数字。如果继续这个过程，我们将得到更多位数的反转数字。\n\n现在的问题是，我们如何知道反转数字的位数已经达到原始数字位数的一半？\n\n由于整个过程我们不断将原始数字除以 10，然后给反转后的数字乘上 10，所以，当原始数字小于或等于反转后的数字时，就意味着我们已经处理了一半位数的数字了。\n\n\n```java\nclass Solution {\n    public boolean isPalindrome(int x) {\n        // 特殊情况：\n        // 如上所述，当 x < 0 时，x 不是回文数。\n        // 同样地，如果数字的最后一位是 0，为了使该数字为回文，\n        // 则其第一位数字也应该是 0\n        // 只有 0 满足这一属性\n        if (x < 0 || (x % 10 == 0 && x != 0)) {\n            return false;\n        }\n\n        int revertedNumber = 0;\n        while (x > revertedNumber) {\n            revertedNumber = revertedNumber * 10 + x % 10;\n            x /= 10;\n        }\n\n        // 当数字长度为奇数时，我们可以通过 revertedNumber/10 去除处于中位的数字。\n        // 例如，当输入为 12321 时，在 while 循环的末尾我们可以得到 x = 12，revertedNumber = 123，\n        // 由于处于中位的数字不影响回文（它总是与自己相等），所以我们可以简单地将其去除。\n        return x == revertedNumber || x == revertedNumber / 10;\n    }\n}\n```\n\n**复杂度分析**\n\n- 时间复杂度：O(logn)，对于每次迭代，我们会将输入除以 10，因此时间复杂度为 O(logn)。\n- 空间复杂度：O(1)。我们只需要常数空间存放若干变量。', 'public class Solution {\n    public boolean isPalindrome(int x) {\n        if (x < 0 || (x % 10 == 0 && x != 0)) {\n            return false;\n        }\n        int revertedNumber = 0;\n        while (x > revertedNumber) {\n            revertedNumber = revertedNumber * 10 + x % 10;\n            x /= 10;\n        }\n        return x == revertedNumber || x == revertedNumber / 10;\n    }\n}', 52, 1, 8, '{\"memoryLimit\":1000,\"stackLimit\":1000,\"timeLimit\":1000}', '[{\"input\":\"121\",\"output\":\"true\"},{\"input\":\"12321\",\"output\":\"true\"},{\"input\":\"-121\",\"output\":\"false\"},{\"input\":\"10\",\"output\":\"false\"}]', 1, '2024-12-12 18:01:31', '2024-12-15 13:55:38', 0);
+INSERT INTO `oj_question` VALUES (22, '回文数', '给你一个整数 ***x*** ，如果 **x** 是一个回文整数，返回 **true** ；否则，返回 **false**。\n\n*回文数*是指正序（从左向右）和倒序（从右向左）读都是一样的整数。\n\n例如，**121** 是回文，而 **123** 不是。\n \n## 示例 1：\n\n输入：x = 121\n输出：true\n\n## 示例 2：\n\n输入：x = -121\n输出：false\n解释：从左向右读, 为 -121 。 从右向左读, 为 121- 。因此它不是一个回文数。\n\n## 示例 3：\n\n输入：x = 10\n输出：false\n解释：从右向左读, 为 01 。因此它不是一个回文数。\n \n\n*提示：*\n- -231 <= x <= 231 - 1\n \n\n*进阶*：你能不将整数转为字符串来解决这个问题吗？', 'public static void main(String[]args){\n        Solution solution=new Solution();\n        int i=Integer.parseInt(args[0]);\n        boolean palindrome=solution.isPalindrome(i);\n        System.out.println(palindrome);\n}', 'public class Solution {\n    public boolean isPalindrome(int x) {\n    }\n}', '**方法一：反转一半数字**\n\n**思路**\n\n映入脑海的第一个想法是将数字转换为字符串，并检查字符串是否为回文。但是，这需要额外的非常量空间来创建问题描述中所不允许的字符串。\n\n第二个想法是将数字本身反转，然后将反转后的数字与原始数字进行比较，如果它们是相同的，那么这个数字就是回文。\n但是，如果反转后的数字大于 int.MAX，我们将遇到整数溢出问题。\n\n按照第二个想法，为了避免数字反转可能导致的溢出问题，为什么不考虑只反转 int 数字的一半？毕竟，如果该数字是回文，其后半部分反转后应该与原始数字的前半部分相同。\n\n例如，输入 1221，我们可以将数字 “1221” 的后半部分从 “21” 反转为 “12”，并将其与前半部分 “12” 进行比较，因为二者相同，我们得知数字 1221 是回文。\n\n**算法**\n\n首先，我们应该处理一些临界情况。所有负数都不可能是回文，例如：-123 不是回文，因为 - 不等于 3。所以我们可以对所有负数返回 false。除了 0 以外，所有个位是 0 的数字不可能是回文，因为最高位不等于 0。所以我们可以对所有大于 0 且个位是 0 的数字返回 false。\n\n现在，让我们来考虑如何反转后半部分的数字。\n\n对于数字 1221，如果执行 1221 % 10，我们将得到最后一位数字 1，要得到倒数第二位数字，我们可以先通过除以 10 把最后一位数字从 1221 中移除，1221 / 10 = 122，再求出上一步结果除以 10 的余数，122 % 10 = 2，就可以得到倒数第二位数字。如果我们把最后一位数字乘以 10，再加上倒数第二位数字，1 * 10 + 2 = 12，就得到了我们想要的反转后的数字。如果继续这个过程，我们将得到更多位数的反转数字。\n\n现在的问题是，我们如何知道反转数字的位数已经达到原始数字位数的一半？\n\n由于整个过程我们不断将原始数字除以 10，然后给反转后的数字乘上 10，所以，当原始数字小于或等于反转后的数字时，就意味着我们已经处理了一半位数的数字了。\n\n\n```java\nclass Solution {\n    public boolean isPalindrome(int x) {\n        // 特殊情况：\n        // 如上所述，当 x < 0 时，x 不是回文数。\n        // 同样地，如果数字的最后一位是 0，为了使该数字为回文，\n        // 则其第一位数字也应该是 0\n        // 只有 0 满足这一属性\n        if (x < 0 || (x % 10 == 0 && x != 0)) {\n            return false;\n        }\n\n        int revertedNumber = 0;\n        while (x > revertedNumber) {\n            revertedNumber = revertedNumber * 10 + x % 10;\n            x /= 10;\n        }\n\n        // 当数字长度为奇数时，我们可以通过 revertedNumber/10 去除处于中位的数字。\n        // 例如，当输入为 12321 时，在 while 循环的末尾我们可以得到 x = 12，revertedNumber = 123，\n        // 由于处于中位的数字不影响回文（它总是与自己相等），所以我们可以简单地将其去除。\n        return x == revertedNumber || x == revertedNumber / 10;\n    }\n}\n```\n\n**复杂度分析**\n\n- 时间复杂度：O(logn)，对于每次迭代，我们会将输入除以 10，因此时间复杂度为 O(logn)。\n- 空间复杂度：O(1)。我们只需要常数空间存放若干变量。', 'public class Solution {\n    public boolean isPalindrome(int x) {\n        if (x < 0 || (x % 10 == 0 && x != 0)) {\n            return false;\n        }\n        int revertedNumber = 0;\n        while (x > revertedNumber) {\n            revertedNumber = revertedNumber * 10 + x % 10;\n            x /= 10;\n        }\n        return x == revertedNumber || x == revertedNumber / 10;\n    }\n}', 53, 1, 9, '{\"memoryLimit\":1000,\"stackLimit\":1000,\"timeLimit\":1000}', '[{\"input\":\"121\",\"output\":\"true\"},{\"input\":\"12321\",\"output\":\"true\"},{\"input\":\"-121\",\"output\":\"false\"},{\"input\":\"10\",\"output\":\"false\"}]', 1, '2024-12-12 18:01:31', '2024-12-15 13:55:38', 0);
 INSERT INTO `oj_question` VALUES (25, '整数反转', '给你一个 **32** 位的有符号整数 **x** ，返回将 **x** 中的数字部分反转后的结果。\n\n如果反转后整数超过 **32** 位的有符号整数的范围 **[−231,  231 − 1]** ，就返回 **0**。\n\n**假设环境不允许存储 64 位整数（有符号或无符号）。**\n \n\n## 示例 1：\n输入：x = 123\n输出：321\n\n## 示例 2：\n输入：x = -123\n输出：-321\n\n## 示例 3：\n输入：x = 120\n输出：21\n\n## 示例 4：\n输入：x = 0\n输出：0\n \n\n**提示：**\n-231 <= x <= 231 - 1', 'public static void main(String[] args) {\n        Solution solution = new Solution();\n        int i = Integer.parseInt(args[0]);\n        int reverse = solution.reverse(i);\n        System.out.println(reverse);\n    }', 'class Solution {\n    public int reverse(int x) {\n        \n    }\n}', '```java\nclass Solution {\n    public int reverse(int x) {\n        int rev = 0;\n        while (x != 0) {\n            if (rev < Integer.MIN_VALUE / 10 || rev > Integer.MAX_VALUE / 10) {\n                return 0;\n            }\n            int digit = x % 10;\n            x /= 10;\n            rev = rev * 10 + digit;\n        }\n        return rev;\n    }\n}\n```', '', 8, 2, 2, '{\"memoryLimit\":50,\"stackLimit\":1000,\"timeLimit\":10000}', '[{\"input\":\"123\",\"output\":\"321\"},{\"input\":\"-123\",\"output\":\"-321\"},{\"input\":\"120\",\"output\":\"21\"}]', 1, '2024-12-13 17:22:48', '2024-12-13 17:29:49', 0);
 INSERT INTO `oj_question` VALUES (27, '读取文件测试', '123', 'public static void main(String[] args) {\n        Solution solution = new Solution();\n        String palindrome = solution.isPalindrome();\n        System.out.println(palindrome);\n    }', 'public class Solution {\n    public String isPalindrome() {\n    }\n}', '123', '', 8, 1, 0, '{\"memoryLimit\":50,\"stackLimit\":1000,\"timeLimit\":10000}', '[{\"input\":\"123\",\"output\":\"123\"},{\"input\":\"123\",\"output\":\"123\"}]', 1, '2024-12-14 03:00:05', '2024-12-14 03:00:40', 0);
+INSERT INTO `oj_question` VALUES (28, '罗马数字转整数', '罗马数字包含以下七种字符: I， V， X， L，C，D 和 M。\n\n| 字符 | 数值 |\n| --- | --- |\n| I | 1 |\n| V | 5 |\n| X | 10 |\n| L | 50 |\n| C | 100 |\n| D | 500 |\n| M | 1000 |\n     \n例如， 罗马数字 2 写做 II ，即为两个并列的 1 。12 写做 XII ，即为 X + II 。 27 写做  XXVII, 即为 XX + V + II 。\n\n通常情况下，罗马数字中小的数字在大的数字的右边。但也存在特例，例如 4 不写做 IIII，而是 IV。数字 1 在数字 5 的左边，所表示的数等于大数 5 减小数 1 得到的数值 4 。同样地，数字 9 表示为 IX。这个特殊的规则只适用于以下六种情况：\n\nI 可以放在 V (5) 和 X (10) 的左边，来表示 4 和 9。\nX 可以放在 L (50) 和 C (100) 的左边，来表示 40 和 90。 \nC 可以放在 D (500) 和 M (1000) 的左边，来表示 400 和 900。\n给定一个罗马数字，将其转换成整数。\n\n \n\n示例 1:\n\n输入: s = \"III\"\n输出: 3\n示例 2:\n\n输入: s = \"IV\"\n输出: 4\n示例 3:\n\n输入: s = \"IX\"\n输出: 9\n示例 4:\n\n输入: s = \"LVIII\"\n输出: 58\n解释: L = 50, V= 5, III = 3.\n示例 5:\n\n输入: s = \"MCMXCIV\"\n输出: 1994\n解释: M = 1000, CM = 900, XC = 90, IV = 4.\n \n\n**提示：**\n\n- 1 <= s.length <= 15\n- s 仅含字符 (\'I\', \'V\', \'X\', \'L\', \'C\', \'D\', \'M\')\n- 题目数据保证 s 是一个有效的罗马数字，且表示整数在范围 [1, 3999] 内\n- 题目所给测试用例皆符合罗马数字书写规则，不会出现跨位等情况。\n- IL 和 IM 这样的例子并不符合题目要求，49 应该写作 XLIX，999 应该写作 CMXCIX 。\n- 关于罗马数字的详尽书写规则，可以参考 [罗马数字 - 百度百科](https://baike.baidu.com/item/%E7%BD%97%E9%A9%AC%E6%95%B0%E5%AD%97/772296)', 'public static void main(String[] args) {\n        Solution solution = new Solution();\n        String arg = args[0];\n        int romanToInt = solution.romanToInt(arg);\n        System.out.println(romanToInt);\n    }', 'import java.util.HashMap;\nimport java.util.Map;\n\nclass Solution {\n    public int romanToInt(String s) {\n    \n    }\n}', '# 思路\n\n通常情况下，罗马数字中小的数字在大的数字的右边。若输入的字符串满足该情况，那么可以将每个字符视作一个单独的值，累加每个字符对应的数值即可。\n\n例如 XXVII 可视作 X+X+V+I+I=10+10+5+1+1=27。\n\n若存在小的数字在大的数字的左边的情况，根据规则需要减去小的数字。对于这种情况，我们也可以将每个字符视作一个单独的值，若一个数字右侧的数字比它大，则将该数字的符号取反。\n\n例如 XIV 可视作 X−I+V=10−1+5=14。', 'import java.util.HashMap;\nimport java.util.Map;\n\nclass Solution {\n    Map<Character, Integer> symbolValues = new HashMap<Character, Integer>() {{\n        put(\'I\', 1);\n        put(\'V\', 5);\n        put(\'X\', 10);\n        put(\'L\', 50);\n        put(\'C\', 100);\n        put(\'D\', 500);\n        put(\'M\', 1000);\n    }};\n    public int romanToInt(String s) {\n        int ans = 0;\n        int n = s.length();\n        for (int i = 0; i < n; ++i) {\n            int value = symbolValues.get(s.charAt(i));\n            if (i < n - 1 && value < symbolValues.get(s.charAt(i + 1))) {\n                ans -= value;\n            } else {\n                ans += value;\n            }\n        }\n        return ans;\n    }\n}', 1, 1, 1, '{\"memoryLimit\":50,\"stackLimit\":1000,\"timeLimit\":10000}', '[{\"input\":\"III\",\"output\":\"3\"},{\"input\":\"LVIII\",\"output\":\"58\"},{\"input\":\"MCMXCIV\",\"output\":\"1994\"}]', 1, '2025-02-01 14:09:15', '2025-02-01 14:13:11', 0);
 
 -- ----------------------------
 -- Table structure for oj_question_submit
@@ -66,7 +67,7 @@ CREATE TABLE `oj_question_submit`  (
   `is_delete` tinyint NOT NULL DEFAULT 0 COMMENT '是否删除',
   PRIMARY KEY (`id`) USING BTREE,
   INDEX `idx_question_id`(`question_id` ASC) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 192 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = 'oj模块-题目提交' ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 194 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci COMMENT = 'oj模块-题目提交' ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of oj_question_submit
@@ -151,6 +152,8 @@ INSERT INTO `oj_question_submit` VALUES (188, 25, 1, 'java', 'class Solution {\n
 INSERT INTO `oj_question_submit` VALUES (189, 25, 1, 'java', 'class Solution {\n    public int reverse(int x) {\n        String str;\n        if (str.length() == 1) {\n            return 123;\n        }\n        int rev = 0;\n        while (x != 0) {\n            if (rev < Integer.MIN_VALUE / 10 || rev > Integer.MAX_VALUE / 10) {\n                return 0;\n            }\n            int digit = x % 10;\n            x /= 10;\n            rev = rev * 10 + digit;\n        }\n        return rev;\n    }\n}', '{\"message\":\"编译错误\",\"time\":0,\"memory\":0}', 2, 3, '2024-12-16 01:02:13', '2024-12-16 01:02:13', 0);
 INSERT INTO `oj_question_submit` VALUES (190, 25, 1, 'java', 'class Solution {\n    public int reverse(int x) {\n        String str = null;\n        if (str.length() == 1) {\n            return 123;\n        }\n        int rev = 0;\n        while (x != 0) {\n            if (rev < Integer.MIN_VALUE / 10 || rev > Integer.MAX_VALUE / 10) {\n                return 0;\n            }\n            int digit = x % 10;\n            x /= 10;\n            rev = rev * 10 + digit;\n        }\n        return rev;\n    }\n}', '{\"inputList\":[\"123\",\"-123\",\"120\"],\"outputList\":[\"Exception in thread \\\"main\\\" java.lang.NullPointerException\\n\\tat Solution.reverse(Solution.java:4)\\n\\tat Solution.main(Solution.java:21)\",\"Exception in thread \\\"main\\\" java.lang.NullPointerException\\n\\tat Solution.reverse(Solution.java:4)\\n\\tat Solution.main(Solution.java:21)\",\"Exception in thread \\\"main\\\" java.lang.NullPointerException\\n\\tat Solution.reverse(Solution.java:4)\\n\\tat Solution.main(Solution.java:21)\"],\"message\":\"运行时错误\",\"time\":143,\"memory\":10546}', 2, 10, '2024-12-16 01:02:52', '2024-12-16 01:02:53', 0);
 INSERT INTO `oj_question_submit` VALUES (191, 25, 1, 'java', 'class Solution {\n    public int reverse(int x) {\n        long ONE_HOUR = 60 * 60 * 1000L;\n        try {\n        Thread.sleep(ONE_HOUR);\n        } catch (InterruptedException e) {\n        throw new RuntimeException(e);\n        }\n        int rev = 0;\n        while (x != 0) {\n            if (rev < Integer.MIN_VALUE / 10 || rev > Integer.MAX_VALUE / 10) {\n                return 0;\n            }\n            int digit = x % 10;\n            x /= 10;\n            rev = rev * 10 + digit;\n        }\n        return rev;\n    }\n}', '{\"inputList\":[\"123\",\"-123\",\"120\"],\"outputList\":[\"\",\"\",\"\"],\"message\":\"超时\",\"time\":10026,\"memory\":13920}', 2, 5, '2024-12-16 01:04:41', '2024-12-16 01:05:11', 0);
+INSERT INTO `oj_question_submit` VALUES (192, 22, 1, 'java', 'public class Solution {\n    public boolean isPalindrome(int x) {\n        if (x < 0 || (x % 10 == 0 && x != 0)) {\n            return false;\n        }\n\n        int revertedNumber = 0;\n        while (x > revertedNumber) {\n            revertedNumber = revertedNumber * 10 + x % 10;\n            x /= 10;\n        }\n        return x == revertedNumber || x == revertedNumber / 10;\n    }\n}', '{\"inputList\":[\"121\",\"12321\",\"-121\",\"10\"],\"outputList\":[\"true\",\"true\",\"false\",\"false\"],\"message\":\"答案正确\",\"time\":105,\"memory\":12486}', 2, 1, '2024-12-18 13:10:06', '2024-12-18 13:10:07', 0);
+INSERT INTO `oj_question_submit` VALUES (193, 28, 1, 'java', 'import java.util.HashMap;\nimport java.util.Map;\n\nclass Solution {\n    Map<Character, Integer> symbolValues = new HashMap<Character, Integer>() {{\n        put(\'I\', 1);\n        put(\'V\', 5);\n        put(\'X\', 10);\n        put(\'L\', 50);\n        put(\'C\', 100);\n        put(\'D\', 500);\n        put(\'M\', 1000);\n    }};\n\n    public int romanToInt(String s) {\n        int ans = 0;\n        int n = s.length();\n        for (int i = 0; i < n; ++i) {\n            int value = symbolValues.get(s.charAt(i));\n            if (i < n - 1 && value < symbolValues.get(s.charAt(i + 1))) {\n                ans -= value;\n            } else {\n                ans += value;\n            }\n        }\n        return ans;\n    }\n}', '{\"inputList\":[\"III\",\"LVIII\",\"MCMXCIV\"],\"outputList\":[\"3\",\"58\",\"1994\"],\"message\":\"答案正确\",\"time\":104,\"memory\":12816}', 2, 1, '2025-02-01 14:14:06', '2025-02-01 14:14:07', 0);
 
 -- ----------------------------
 -- Table structure for oj_question_tag
@@ -161,7 +164,7 @@ CREATE TABLE `oj_question_tag`  (
   `question_id` int NOT NULL,
   `tag_id` int NOT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 42 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 51 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of oj_question_tag
@@ -169,6 +172,9 @@ CREATE TABLE `oj_question_tag`  (
 INSERT INTO `oj_question_tag` VALUES (38, 25, 27);
 INSERT INTO `oj_question_tag` VALUES (40, 27, 31);
 INSERT INTO `oj_question_tag` VALUES (41, 22, 27);
+INSERT INTO `oj_question_tag` VALUES (48, 28, 36);
+INSERT INTO `oj_question_tag` VALUES (49, 28, 27);
+INSERT INTO `oj_question_tag` VALUES (50, 28, 37);
 
 -- ----------------------------
 -- Table structure for oj_tag
@@ -179,13 +185,15 @@ CREATE TABLE `oj_tag`  (
   `tag` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_0900_ai_ci NOT NULL COMMENT 'tag名称',
   `citation_count` int NOT NULL COMMENT 'tag引用次数',
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 32 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
+) ENGINE = InnoDB AUTO_INCREMENT = 38 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = Dynamic;
 
 -- ----------------------------
 -- Records of oj_tag
 -- ----------------------------
-INSERT INTO `oj_tag` VALUES (27, '数学', 2);
+INSERT INTO `oj_tag` VALUES (27, '数学', 3);
 INSERT INTO `oj_tag` VALUES (31, '测试', 1);
+INSERT INTO `oj_tag` VALUES (36, '哈希表', 1);
+INSERT INTO `oj_tag` VALUES (37, '字符串', 1);
 
 -- ----------------------------
 -- Table structure for t_home
@@ -208,9 +216,9 @@ CREATE TABLE `t_home`  (
 -- ----------------------------
 INSERT INTO `t_home` VALUES (7, 'OJ-提交记录', 5, 'SubmitRecord', '个人提交记录', NULL, '2024-01-31 14:42:51', '2024-12-16 21:43:44');
 INSERT INTO `t_home` VALUES (8, 'OJ-Ac率', 1, 'OJAC', 'OJ系统提交通过率层叠面积图', 'homeDemo2.png', '2024-01-31 14:43:03', '2024-12-16 21:43:51');
-INSERT INTO `t_home` VALUES (9, '用户分布', 1, 'userDistribution', '用户分布', 'homeDemo3.png', '2024-01-31 14:43:14', '2024-12-16 21:43:54');
+INSERT INTO `t_home` VALUES (9, '用户分布', 1, 'userDistribution', '用户分布', 'homeDemo3.png', '2024-01-31 14:43:14', '2024-12-18 13:17:27');
 INSERT INTO `t_home` VALUES (18, 'OJ-排名', 1, 'OJRank', 'OJ通过率 提交率前十名', 'homeDemo4.png', '2024-02-04 16:14:43', '2024-12-16 21:43:58');
-INSERT INTO `t_home` VALUES (22, '饼状图示例', 1, 'homeDemo5', NULL, NULL, '2024-02-22 16:04:35', '2024-12-16 14:52:13');
+INSERT INTO `t_home` VALUES (22, '饼状图示例', 1, 'homeDemo5', NULL, NULL, '2024-02-22 16:04:35', '2024-12-18 13:17:17');
 
 -- ----------------------------
 -- Table structure for t_menu
@@ -349,7 +357,7 @@ CREATE TABLE `t_role_home`  (
   `order_num` int NOT NULL,
   `width_value` int NULL DEFAULT NULL,
   PRIMARY KEY (`id`) USING BTREE
-) ENGINE = InnoDB AUTO_INCREMENT = 364 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
+) ENGINE = InnoDB AUTO_INCREMENT = 373 CHARACTER SET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci ROW_FORMAT = DYNAMIC;
 
 -- ----------------------------
 -- Records of t_role_home
@@ -361,15 +369,15 @@ INSERT INTO `t_role_home` VALUES (149, 26, 9, 4, NULL);
 INSERT INTO `t_role_home` VALUES (314, 2, 7, 1, NULL);
 INSERT INTO `t_role_home` VALUES (315, 2, 18, 2, NULL);
 INSERT INTO `t_role_home` VALUES (316, 2, 8, 3, NULL);
-INSERT INTO `t_role_home` VALUES (355, 1, 18, 1, NULL);
-INSERT INTO `t_role_home` VALUES (356, 1, 7, 2, NULL);
-INSERT INTO `t_role_home` VALUES (357, 1, 8, 3, NULL);
-INSERT INTO `t_role_home` VALUES (358, 1, 22, 4, NULL);
-INSERT INTO `t_role_home` VALUES (359, 1, 9, 5, NULL);
 INSERT INTO `t_role_home` VALUES (360, 27, 7, 1, NULL);
 INSERT INTO `t_role_home` VALUES (361, 27, 8, 2, NULL);
 INSERT INTO `t_role_home` VALUES (362, 27, 9, 3, NULL);
 INSERT INTO `t_role_home` VALUES (363, 27, 18, 4, NULL);
+INSERT INTO `t_role_home` VALUES (368, 1, 18, 1, NULL);
+INSERT INTO `t_role_home` VALUES (369, 1, 7, 2, NULL);
+INSERT INTO `t_role_home` VALUES (370, 1, 8, 3, NULL);
+INSERT INTO `t_role_home` VALUES (371, 1, 22, 4, NULL);
+INSERT INTO `t_role_home` VALUES (372, 1, 9, 5, NULL);
 
 -- ----------------------------
 -- Table structure for t_role_menu
@@ -554,9 +562,9 @@ CREATE TABLE `t_user_auth`  (
 -- ----------------------------
 -- Records of t_user_auth
 -- ----------------------------
-INSERT INTO `t_user_auth` VALUES (1, 1, 'admin@163.com', '$2a$10$NatFlJeD1KE.IyJvnxqI9.RB7k03siLspnPcTJkBvcKoLfOtSvtIW', 1, '0:0:0:0:0:0:0:1', '内网IP|内网IP', '2022-08-19 21:43:46', NULL, '2024-12-16 21:42:53');
+INSERT INTO `t_user_auth` VALUES (1, 1, 'admin@163.com', '$2a$10$NatFlJeD1KE.IyJvnxqI9.RB7k03siLspnPcTJkBvcKoLfOtSvtIW', 1, '0:0:0:0:0:0:0:1', '内网IP|内网IP', '2022-08-19 21:43:46', NULL, '2025-02-01 14:17:35');
 INSERT INTO `t_user_auth` VALUES (1014, 1024, '2938007768@qq.com', '$2a$10$hiltyiaBve/qZ4oRrUHLyeZmBVfgmU3i2/b4AAz3w0rnqpfU/Z/FK', 1, '202.106.86.134', '中国|北京|北京市|联通', '2023-07-05 09:51:19', '2023-07-05 09:59:08', '2023-07-05 09:59:08');
-INSERT INTO `t_user_auth` VALUES (1031, 1041, '2876053639', '$2a$10$TijIO4kHxLL7XUeedQKy1.sefDTDTem2I1FfTXM9ep1.2gWICpaIK', 3, '0:0:0:0:0:0:0:1', '内网IP|内网IP', '2024-12-15 23:10:29', NULL, '2024-12-16 21:44:20');
+INSERT INTO `t_user_auth` VALUES (1031, 1041, '2876053639', '$2a$10$TijIO4kHxLL7XUeedQKy1.sefDTDTem2I1FfTXM9ep1.2gWICpaIK', 3, '0:0:0:0:0:0:0:1', '内网IP|内网IP', '2024-12-15 23:10:29', NULL, '2025-02-01 14:17:03');
 INSERT INTO `t_user_auth` VALUES (1032, 1042, '123456789', '$2a$10$nwbWx5Q5fZLG2RS4CMVKa.zh9oO7wv8KUZ4CkPuwpSl0XKb9ElBxu', 3, '202.106.86.134', '中国|北京|北京市|联通', '2024-12-15 23:11:06', NULL, NULL);
 
 -- ----------------------------
@@ -573,7 +581,7 @@ CREATE TABLE `t_user_home`  (
 -- ----------------------------
 -- Records of t_user_home
 -- ----------------------------
-INSERT INTO `t_user_home` VALUES (1, 1, '[{\"homeId\":8,\"widthValue\":3,\"orderNum\":1},{\"homeId\":18,\"widthValue\":3,\"orderNum\":2},{\"homeId\":9,\"widthValue\":2,\"orderNum\":3},{\"homeId\":22,\"widthValue\":4,\"orderNum\":4},{\"homeId\":7,\"widthValue\":5,\"orderNum\":5}]');
+INSERT INTO `t_user_home` VALUES (1, 1, '[{\"homeId\":8,\"widthValue\":3,\"orderNum\":1},{\"homeId\":18,\"widthValue\":3,\"orderNum\":2},{\"homeId\":7,\"widthValue\":5,\"orderNum\":3},{\"homeId\":9,\"widthValue\":2,\"orderNum\":4},{\"homeId\":22,\"widthValue\":4,\"orderNum\":5}]');
 INSERT INTO `t_user_home` VALUES (4, 1024, '[{\"homeId\":9,\"orderNum\":1},{\"homeId\":7,\"orderNum\":2}]');
 INSERT INTO `t_user_home` VALUES (6, 1041, '[{\"homeId\":8,\"widthValue\":2,\"orderNum\":1},{\"homeId\":9,\"widthValue\":2,\"orderNum\":2},{\"homeId\":18,\"widthValue\":2,\"orderNum\":3},{\"homeId\":7,\"widthValue\":5,\"orderNum\":4}]');
 
